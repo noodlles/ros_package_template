@@ -4,9 +4,15 @@ project(template)
 ###################################################################
 ##1.                       Compile Option                        ##
 ###################################################################
+##CMAKE_CXX_FLAGS
+#(1) -O3优化
+#(2) -march=native:自动选择合适的cpu优化
+#(3) sse加速
 
-SET(CMAKE_BUILD_TYPE "Release")                           #
-SET(CMAKE_CXX_FLAGS "-std=c++11 -march=native -O3 -Wall") # -O3优化 , -march=native:自动选择合适的cpu优化
+SET(CMAKE_BUILD_TYPE "Release")                         #
+SET(CMAKE_CXX_FLAGS "-std=c++11 \
+    -msse -msse2 -msse3 -msse4 -msse4.1 -msse4.2    \
+    -march=native -O3 -Wall")
 add_compile_options(-std=c++11)                         # C++11支持
 
 
