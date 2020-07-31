@@ -1,8 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(template)
 
-# C++11支持
-add_compile_options(-std=c++11)
+###################################################################
+##1.                       Compile Option                        ##
+###################################################################
+
+SET(CMAKE_BUILD_TYPE "Release")                           #
+SET(CMAKE_CXX_FLAGS "-std=c++11 -march=native -O3 -Wall") # -O3优化 , -march=native:自动选择合适的cpu优化
+add_compile_options(-std=c++11)                         # C++11支持
+
+
+###################################################################
+##2.              Find_Package && INCLUDE                        ##
+###################################################################
 
 # ROS的package
 find_package(catkin REQUIRED COMPONENTS
@@ -16,13 +26,25 @@ find_package(catkin REQUIRED COMPONENTS
 # 普通C++的库
 find_package(Boost REQUIRED COMPONENTS system)
 
+include_directories(
+# include
+  ${catkin_INCLUDE_DIRS}
+)
 
-## 如果包含了.py的启动脚本，那么取消注释，这样 运行rosrun/roslaunch  ...package   ...node 的时候可以找到
+include_directories(cmake/eigen.cmake)
+
+
+###################################################################
+##3.                       Catkin，相关                           ##
+###################################################################
+
+## 如果包含了.py的启动脚本，那么取消注释
+## 这样 运行rosrun/roslaunch  ...package   ...node 的时候可以找到
 # catkin_python_setup()
 
-################################################
-## Declare ROS messages, services and actions ##
-################################################
+#####################################################
+##3.(1) Declare ROS messages, services and actions ##
+#####################################################
 
 ## 如果项目用到了自定义的msg，srv，action
 ## 1. 在package.xml中添加
@@ -54,9 +76,9 @@ generate_messages(
     std_msgs  # Or other packages containing msgs
 )
 
-################################################
-## Declare ROS dynamic reconfigure parameters ##
-################################################
+#####################################################
+##3.(2) Declare ROS dynamic reconfigure parameters ##
+#####################################################
 
 ## To declare and build dynamic reconfigure parameters within this
 ## package, follow these steps:
@@ -74,9 +96,9 @@ generate_messages(
 #   cfg/DynReconf2.cfg
 # )
 
-###################################
-## catkin specific configuration ##
-###################################
+####################################################
+##3.(3)        catkin specific configuration      ##
+####################################################
 ## catkin_package 为这个package 生成对应的 .cmake文件 ====> 作为外部库引用
 ## INCLUDE_DIRS:    需要导出的头文件的路径
 ## LIBRARIES:       导出的库名
@@ -90,33 +112,40 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
-###########
-## Build ##
-###########
+###################################################################
+##4.                       Target_Link                           ##
+###################################################################
 
-include_directories(
-# include
-  ${catkin_INCLUDE_DIRS}
-)
+## 设置需要链接的所有库
+set(ALL_TARGET_LINK_LIBRARIES "")
+list(APPEND ALL_TARGET_LINK_LIBRARIES)
 
+
+###################################################################
+##5.                    Build && Export                          ##
+###################################################################
+
+##################################
 ## 将本package导出为库
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/template.cpp
 # )
-
 ## 添加本package导出库的依赖库，例如，如果本项目导出库需要先构建自定义的msg，srv等，则需要在这里取消注释即可
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+##################################
 
+
+##################################
 ## 可执行文件
 add_executable(${PROJECT_NAME}_node src/template_node.cpp)
 
 ## 添加可执行文件所需的依赖库，例如，如果可执行文件需要先构建自定义的msg，srv等，则需要在这里取消注释即可
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
 ## 链接库
 target_link_libraries(${PROJECT_NAME}_node
     ${catkin_LIBRARIES}
 )
+##################################
 
 ############################################不常用################################################
 
